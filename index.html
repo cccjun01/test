@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Blog</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <nav>
+      <a class="nav-brand" href="index.html">My Blog</a>
+      <button id="theme-toggle" aria-label="다크 모드로 전환">🌙</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <ul class="post-list" id="post-list">
+      <!-- Populated by JS -->
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>HTML · CSS · JavaScript — 프레임워크 없이 만든 블로그</p>
+  </div>
+</footer>
+
+<script src="js/posts.js"></script>
+<script>
+  const list = document.getElementById('post-list');
+
+  if (!POSTS.length) {
+    list.innerHTML = '<li><p class="notice">아직 게시된 포스트가 없습니다.</p></li>';
+  } else {
+    const sorted = [...POSTS].sort((a, b) => b.date.localeCompare(a.date));
+    list.innerHTML = sorted.map(p => `
+      <li class="post-card">
+        <div class="post-card-title">
+          <a href="post.html#${p.slug}">${p.title}</a>
+        </div>
+        <div class="post-card-meta">${formatDate(p.date)}</div>
+        <div class="post-card-desc">${p.description}</div>
+      </li>
+    `).join('');
+  }
+
+  function formatDate(iso) {
+    return new Date(iso).toLocaleDateString('ko-KR', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  }
+</script>
+
+</body>
+</html>

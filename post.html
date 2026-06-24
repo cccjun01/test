@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포스트 — My Blog</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <nav>
+      <a class="nav-brand" href="index.html">My Blog</a>
+      <button id="theme-toggle" aria-label="다크 모드로 전환">🌙</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <a class="back-link" href="index.html">← 목록으로</a>
+
+    <div class="post-header" id="post-header" hidden>
+      <h1 class="post-title" id="post-title"></h1>
+      <div class="post-meta" id="post-meta"></div>
+    </div>
+
+    <article id="post-content">
+      <p class="notice">포스트를 불러오는 중...</p>
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>HTML · CSS · JavaScript — 프레임워크 없이 만든 블로그</p>
+  </div>
+</footer>
+
+<script src="js/posts.js"></script>
+<script src="js/parser.js"></script>
+<script>
+  const slug = location.hash.slice(1); // #slug → 'slug'
+  const postMeta = POSTS.find(p => p.slug === slug);
+
+  if (!slug) {
+    showError('슬러그가 없습니다. URL에 #포스트명 을 추가하세요.');
+  } else {
+    if (postMeta) {
+      document.title = `${postMeta.title} — My Blog`;
+      document.getElementById('post-title').textContent = postMeta.title;
+      document.getElementById('post-meta').textContent = formatDate(postMeta.date);
+      document.getElementById('post-header').hidden = false;
+    }
+
+    loadPost(slug)
+      .then(html => {
+        document.getElementById('post-content').innerHTML = html;
+      })
+      .catch(err => showError(err.message));
+  }
+
+  function showError(msg) {
+    document.getElementById('post-content').innerHTML =
+      `<p class="notice">오류: ${msg}</p>`;
+  }
+
+  function formatDate(iso) {
+    return new Date(iso).toLocaleDateString('ko-KR', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  }
+</script>
+
+</body>
+</html>
